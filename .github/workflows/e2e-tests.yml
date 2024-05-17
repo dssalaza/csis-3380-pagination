@@ -29,10 +29,10 @@ on:
   #       default: "health-check"
   #       options:
   #         - health-check
-  # push:
-  #   branches:
-  #     - pw-test-report
-  #     - qa
+  push:
+    branches:
+      - pw-test-report
+      - qa
       
   deployment_status:
 
