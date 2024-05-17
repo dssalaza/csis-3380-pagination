@@ -1,0 +1,51 @@
+name: Web app e2e tests
+
+on:
+  # workflow_dispatch:
+  #   inputs:
+  #     test-environment:
+  #       description: "Environment to run tests against"
+  #       required: true
+  #       type: choice
+  #       default: "qa"
+  #       options:
+  #         - prod
+  #         - qa
+
+  #     browser:
+  #       description: "Browser to run tests against"
+  #       required: true
+  #       type: choice
+  #       default: "chromium"
+  #       options:
+  #         - chromium
+  #         - webkit
+  #         - firefox
+
+  #     test-project:
+  #       description: "Test suite to run"
+  #       required: true
+  #       type: choice
+  #       default: "health-check"
+  #       options:
+  #         - health-check
+  # push:
+  #   branches:
+  #     - pw-test-report
+  #     - qa
+      
+  deployment_status:
+
+jobs:
+  E2E-Tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Checking vercel URL
+        run: |
+          echo "Deployment Target URL: ${{ github.event.deployment_status.target_url }}"
+          echo "Deployment Environment: ${{ github.event.deployment_status.environment }}"
+          echo "Deployment Status: ${{ github.event.deployment_status.state }}"
