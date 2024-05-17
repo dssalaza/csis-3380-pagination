@@ -12,23 +12,23 @@ on:
           - prod
           - qa
 
-  #     browser:
-  #       description: "Browser to run tests against"
-  #       required: true
-  #       type: choice
-  #       default: "chromium"
-  #       options:
-  #         - chromium
-  #         - webkit
-  #         - firefox
+      browser:
+        description: "Browser to run tests against"
+        required: true
+        type: choice
+        default: "chromium"
+        options:
+          - chromium
+          - webkit
+          - firefox
 
-  #     test-project:
-  #       description: "Test suite to run"
-  #       required: true
-  #       type: choice
-  #       default: "health-check"
-  #       options:
-  #         - health-check
+      test-project:
+        description: "Test suite to run"
+        required: true
+        type: choice
+        default: "health-check"
+        options:
+          - health-check
   push:
     branches:
       - pw-test-report
