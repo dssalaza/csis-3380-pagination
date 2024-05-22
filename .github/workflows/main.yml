@@ -26,6 +26,7 @@ jobs:
             echo "ENVIRONMENT=qa" >> $GITHUB_ENV
           else
             echo "ENVIRONMENT=development" >> $GITHUB_ENV
+          fi
         env:
           GITHUB_REF: ${{ github.ref }}
 
