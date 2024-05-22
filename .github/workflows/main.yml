@@ -38,8 +38,8 @@ jobs:
           ref: ${{ github.sha }}
           environment: ${{ env.ENVIRONMENT }}
           description: Deploy to Vercel
+          required_contexts: '[]'
           auto_merge: false
-          required_contexts: []
 
       - name: Save deployment ID
         run: echo "DEPLOYMENT_ID=${{ steps.create-deployment.outputs.id }}" >> $GITHUB_ENV
