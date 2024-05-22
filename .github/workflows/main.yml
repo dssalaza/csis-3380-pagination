@@ -1,0 +1,65 @@
+name: Deploy Web App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Determine Environment
+        id: determine-environment
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "ENVIRONMENT=production" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF}" == "refs/heads/qa" ]]; then
+            echo "ENVIRONMENT=qa" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=development" >> $GITHUB_ENV
+        env:
+          GITHUB_REF: ${{ github.ref }}
+
+      - name: Create deployment
+        id: create-deployment
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/${{ github.repository }}/deployments
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.sha }}
+          environment: ${{ env.ENVIRONMENT }}
+          description: Deploy to Vercel
+          auto_merge: false
+          required_contexts: []
+
+      - name: Save deployment ID
+        run: echo "DEPLOYMENT_ID=${{ steps.create-deployment.outputs.id }}" >> $GITHUB_ENV
+
+      - name: Update deployment status to success
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/${{ github.repository }}/deployments/${{ env.DEPLOYMENT_ID }}/statuses
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: success
+          description: Deployment to Vercel successful
+          environment: ${{ env.ENVIRONMENT }}
+          environment_url: "www.google.com"
+
+      - name: Update deployment status to failure
+        if: failure()
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/${{ github.repository }}/deployments/${{ env.DEPLOYMENT_ID }}/statuses
+          token: ${{ secrets.GITHUB_TOKEN }}
+          state: failure
+          description: Deployment to Vercel failed
+          environment: ${{ env.ENVIRONMENT }}
