@@ -29,12 +29,13 @@ on:
         default: "health-check"
         options:
           - health-check
-  push:
+  workflow_run:
+    workflows: ["Deploy Web App"]
+    types:
+      - completed
     branches:
-      - pw-test-report
       - qa
-      
-  deployment_status:
+      - main
 
 jobs:
   E2E-Tests:
@@ -44,8 +45,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Checking vercel URL
+      - name: Checking variables
         run: |
-          echo "Deployment Target URL: ${{ github.event.deployment_status.target_url }}"
-          echo "Deployment Environment: ${{ github.event.deployment_status.environment }}"
-          echo "Deployment Status: ${{ github.event.deployment_status.state }}"
+          echo "Deployment Environment from workflow: ${{ github.event.workflow_run.outputs.test-environment }}"
+          echo "Deployment Environment from dispatch: ${{ github.event.inputs.test-environment  }}"
