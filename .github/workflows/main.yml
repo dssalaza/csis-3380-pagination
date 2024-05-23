@@ -1,68 +1,30 @@
 name: Deploy Web App
-
 on:
   push:
     branches:
+      - dev
+      - qa
       - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      test-environment: ${{ steps.set-environment.outputs.test-environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Node 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-
-      - name: Determine Environment
-        id: determine-environment
+      - name: Set Environment for Testing
+        id: set-environment
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            echo "ENVIRONMENT=production" >> $GITHUB_ENV
-          elif [[ "${GITHUB_REF}" == "refs/heads/qa" ]]; then
-            echo "ENVIRONMENT=qa" >> $GITHUB_ENV
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "::set-output name=test-environment::prod"
+          elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
+            echo "::set-output name=test-environment::qa"
           else
-            echo "ENVIRONMENT=development" >> $GITHUB_ENV
+            echo "::set-output name=test-environment::none"
           fi
-        env:
-          GITHUB_REF: ${{ github.ref }}
-
-      - name: Create Deployment
-        id: create-deployment
-        run: |
-          curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{
-              "ref": "${{ github.sha }}",
-              "environment": "${{ env.ENVIRONMENT }}",
-              "description": "Deploy to Vercel",
-              "auto_merge": false
-            }' \
-            "https://api.github.com/repos/${{ github.repository }}/deployments"
-
-      - name: Save deployment ID
-        run: echo "DEPLOYMENT_ID=${{ steps.create-deployment.outputs.id }}" >> $GITHUB_ENV
-
-      - name: Update deployment status to success
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/deployments/${{ env.DEPLOYMENT_ID }}/statuses
-          token: ${{ secrets.GITHUB_TOKEN }}
-          state: success
-          description: Deployment to Vercel successful
-          environment: ${{ env.ENVIRONMENT }}
-          environment_url: "www.google.com"
-
-      - name: Update deployment status to failure
-        if: failure()
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/deployments/${{ env.DEPLOYMENT_ID }}/statuses
-          token: ${{ secrets.GITHUB_TOKEN }}
-          state: failure
-          description: Deployment to Vercel failed
-          environment: ${{ env.ENVIRONMENT }}
+             
+      - name: Install Yarn
+        run: npm install -g yarn
