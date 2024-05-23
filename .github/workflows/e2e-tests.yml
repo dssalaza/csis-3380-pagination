@@ -29,13 +29,12 @@ on:
         default: "health-check"
         options:
           - health-check
-  workflow_run:
-    workflows: ["Deploy Web App"]
-    types:
-      - completed
-    branches:
-      - qa
-      - main
+  workflow_call:
+    inputs:
+      test-environment2:
+        required: true
+        type: string
+
 
 jobs:
   E2E-Tests:
@@ -47,5 +46,5 @@ jobs:
 
       - name: Checking variables
         run: |
-          echo "Deployment Environment from workflow: ${{ github.event.workflow_run.outputs.test-environment }}"
+          echo "test-environment2: ${{ inputs.test-environment2 || github.event.inputs.test-environment }}"
           echo "Deployment Environment from dispatch: ${{ github.event.inputs.test-environment  }}"
