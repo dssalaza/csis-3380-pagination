@@ -38,6 +38,9 @@ jobs:
               workflow_id: 'e2e-tests.yml',
               ref: 'main',
               inputs: { 
-                environment: "${{ env.test-environment }}"
+                # environment: "${{ env.test-environment }}"
+                environment: "prod",
+                browser: "chromium",
+                test_project: "health-check"
               }
             })
