@@ -26,9 +26,18 @@ jobs:
             echo "::set-output name=test-environment2::none"
           fi
              
-  call_reusable:
-    needs:
-      - build
-    uses: dssalaza/csis-3380-pagination/.github/workflows/e2e-tests.yml@main
-    with:
-      test-environment2: ${{ needs.build.outputs.test-environment2 }}
+  # call_reusable:
+  #   needs:
+  #     - build
+  #   uses: dssalaza/csis-3380-pagination/.github/workflows/e2e-tests.yml@main
+  #   with:
+  #     test-environment2: ${{ needs.build.outputs.test-environment2 }}
+
+      - name: Dispatch Reusable Workflow
+        if: ${{ steps.set-environment.outputs.test-environment2 != 'none' }}
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{"event_type":"run-reusable-workflow","client_payload":{"test-environment2":"${{ steps.set-environment.outputs.test-environment2 }}"}}'
