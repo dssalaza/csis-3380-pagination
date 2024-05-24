@@ -35,11 +35,29 @@ jobs:
   #   with:
   #     test-environment2: ${{ needs.build.outputs.test-environment2 }}
 
-      - name: Dispatch Reusable Workflow
-        if: ${{ steps.set-environment.outputs.test-environment2 != 'none' }}
+      # - name: Dispatch Reusable Workflow
+      #   if: ${{ steps.set-environment.outputs.test-environment2 != 'none' }}
+      #   run: |
+      #     curl -X POST \
+      #       -H "Accept: application/vnd.github.v3+json" \
+      #       -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+      #       https://api.github.com/repos/${{ github.repository }}/dispatches \
+      #       -d '{"event_type":"run-reusable-workflow","client_payload":{"test-environment2":"${{ steps.set-environment.outputs.test-environment2 }}"}}'
+
+      - name: Change build env var
         run: |
-          curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/dispatches \
-            -d '{"event_type":"run-reusable-workflow","client_payload":{"test-environment2":"${{ steps.set-environment.outputs.test-environment2 }}"}}'
+          echo "test-environment=my-qa" >> "$GITHUB_ENV"
+      - name: Run automated tests on SauceLabs
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'dssalaza',
+              repo: 'cyclops',
+              workflow_id: 'e2e-tests.yml',
+              ref: 'main',
+              inputs: { 
+                test-environment: "${{ env.test-environment }}",
+              }
+            })
