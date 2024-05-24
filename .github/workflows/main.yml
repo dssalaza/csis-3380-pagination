@@ -28,7 +28,7 @@ jobs:
              
       - name: Change build env vari
         run: |
-          echo "test-environment=qa" >> "$GITHUB_ENV"
+          echo "test-environment=prod" >> "$GITHUB_ENV"
           
       - name: Run automated tests on SauceLabs
         if: success()
