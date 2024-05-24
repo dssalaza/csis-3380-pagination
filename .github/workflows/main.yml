@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
+    # outputs:
       # test-environment2: ${{ steps.set-environment.outputs.test-environment2 }}
     steps:
       - name: Checkout
