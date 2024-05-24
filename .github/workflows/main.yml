@@ -9,22 +9,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      test-environment: ${{ steps.set-environment.outputs.test-environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set Environment for Testing
-        id: set-environment
+      - name: Set input_var based on branch
+        id: set-input-var
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "::set-output name=test-environment::prod"
+            echo "test-environment2=prod" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
-            echo "::set-output name=test-environment::qa"
+            echo "test-environment2=qa" >> $GITHUB_ENV
           else
-            echo "::set-output name=test-environment::none"
-          fi
+            echo "test-environment2=none" >> $GITHUB_ENV
              
-      - name: Install Yarn
-        run: npm install -g yarn
+  call_reusable:
+    needs:
+      - build
+    uses: dssalaza/csis-3380-pagination/.github/workflows/e2e-tests.yml@main
+    with:
+      test-environment2: ${{ env.test-environment2 }}
