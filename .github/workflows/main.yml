@@ -13,19 +13,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set input_var based on branch
-        id: set-input-var
+      - name: Set Environment for Testing
+        id: set-environment
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "test-environment2=prod" >> $GITHUB_ENV
+            echo "::set-output name=test-environment2::prod"
           elif [[ "${{ github.ref }}" == "refs/heads/qa" ]]; then
-            echo "test-environment2=qa" >> $GITHUB_ENV
+            echo "::set-output name=test-environment2::qa"
           else
-            echo "test-environment2=none" >> $GITHUB_ENV
+            echo "::set-output name=test-environment2::none"
+          fi
              
   call_reusable:
     needs:
       - build
     uses: dssalaza/csis-3380-pagination/.github/workflows/e2e-tests.yml@main
     with:
-      test-environment2: ${{ env.test-environment2 }}
+      test-environment2: ${{ needs.build.outputs.some_var }}
