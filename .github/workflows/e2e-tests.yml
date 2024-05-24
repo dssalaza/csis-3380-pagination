@@ -3,14 +3,31 @@ name: Web app e2e tests
 on:
   workflow_dispatch:
     inputs:
-      testenvironment:
+      environment:
         description: "Environment to run tests against"
         required: true
         type: choice
-        default: "qa"
         options:
           - prod
           - qa
+
+      browser:
+        description: "Browser to run tests against"
+        required: true
+        type: choice
+        default: "chromium"
+        options:
+          - chromium
+          - webkit
+          - firefox
+
+      test_project:
+        description: "Test suite to run"
+        required: true
+        type: choice
+        default: "health-check"
+        options:
+          - health-check
 
   # workflow_call:
   #   inputs:
