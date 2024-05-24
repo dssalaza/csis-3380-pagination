@@ -12,28 +12,11 @@ on:
           - prod
           - qa
 
-      browser:
-        description: "Browser to run tests against"
-        required: true
-        type: choice
-        default: "chromium"
-        options:
-          - chromium
-          - webkit
-          - firefox
-
-      test-project:
-        description: "Test suite to run"
-        required: true
-        type: choice
-        default: "health-check"
-        options:
-          - health-check
-  workflow_call:
-    inputs:
-      test-environment2:
-        required: true
-        type: string
+  # workflow_call:
+  #   inputs:
+  #     test-environment2:
+  #       required: true
+  #       type: string
 
   # workflow_run:
   #   workflows: ["Deploy Web App"]
