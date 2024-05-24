@@ -3,7 +3,7 @@ name: Web app e2e tests
 on:
   workflow_dispatch:
     inputs:
-      test-environment:
+      testenvironment:
         description: "Environment to run tests against"
         required: true
         type: choice
@@ -33,6 +33,6 @@ jobs:
 
       - name: Checking variables
         run: |
-          echo "test-environment2: ${{ inputs.test-environment2 || github.event.inputs.test-environment }}"
+          echo "test-environment2: ${{ github.event.inputs.testenvironment }}"
           # echo "test-environment2: ${{ github.event.workflow_run.outputs.test-environment2 }}"
-          echo "Deployment Environment from dispatch: ${{ github.event.inputs.test-environment  }}"
+          # echo "Deployment Environment from dispatch: ${{ github.event.inputs.test-environment  }}"
