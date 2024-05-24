@@ -29,15 +29,20 @@ on:
         default: "health-check"
         options:
           - health-check
-  workflow_call:
-    inputs:
-      test-environment2:
-        required: true
-        type: string
+  # workflow_call:
+  #   inputs:
+  #     test-environment2:
+  #       required: true
+  #       type: string
 
+  workflow_run:
+    workflows: ["Deploy Web App"]
+    types:
+      - completed
 
 jobs:
   E2E-Tests:
+    if: github.event.workflow_run.conclusion == 'success'
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -46,5 +51,6 @@ jobs:
 
       - name: Checking variables
         run: |
-          echo "test-environment2: ${{ inputs.test-environment2 || github.event.inputs.test-environment }}"
+          # echo "test-environment2: ${{ inputs.test-environment2 || github.event.inputs.test-environment }}"
+          echo "test-environment2: ${{ github.event.workflow_run.outputs.test-environment2 }}"
           echo "Deployment Environment from dispatch: ${{ github.event.inputs.test-environment  }}"
