@@ -41,6 +41,6 @@ jobs:
               workflow_id: 'e2e-tests.yml',
               ref: 'main',
               inputs: { 
-                test-environment: "${{ env.test-environment }}"
+                testenvironment: "${{ env.test-environment }}"
               }
             })
