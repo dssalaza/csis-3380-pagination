@@ -35,7 +35,7 @@ jobs:
             await github.rest.actions.createWorkflowDispatch({
               owner: 'dssalaza',
               repo: 'csis-3380-pagination',
-              workflow_id: 'e2e-tests.yml',
+              workflow_id: 'webApp.e2e.yml',
               ref: 'main',
               inputs: { 
                 environment: "prod",
