@@ -26,7 +26,25 @@ jobs:
             echo "test-environment=prod" >> "$GITHUB_ENV"
           fi
              
-      - name: Run automated tests on SauceLabs
+      # - name: Run automated tests on SauceLabs
+      #   if: success()
+      #   uses: actions/github-script@v7
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       await github.rest.actions.createWorkflowDispatch({
+      #         owner: 'dssalaza',
+      #         repo: 'csis-3380-pagination',
+      #         workflow_id: 'webApp.e2e.yml',
+      #         ref: 'main',
+      #         inputs: { 
+      #           environment: "prod",
+      #           browser: "chromium",
+      #           test_project: "health-check"
+      #         }
+      #       })
+
+      - name: Trigger E2E Tests
         if: success()
         uses: actions/github-script@v7
         with:
